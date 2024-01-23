@@ -58,22 +58,18 @@ contract ExpirableERC20Token is ERC20, Ownable {
     }
 
     function _transferTokens(address sender, address recipient, uint256 amount) internal {
-        _beforeTokenTransfer(sender, recipient, amount);
         super._transfer(sender, recipient, amount);
         _afterTokenTransfer(sender, recipient, amount);
     }
 
-    function _beforeTokenTransfer(address from, address to, uint256 amount) internal {
-        // Add any pre-transfer logic if needed
-    }
-
-    function _afterTokenTransfer(address from, address to, uint256 amount) internal {
+    function _afterTokenTransfer(address from, address to, uint256 amount) internal returns (uint256){
         // Update user batch balances after a transfer
         userBatchBalances[from][_nextBatchId()] += amount;
         userBatchBalances[to][_nextBatchId()] += amount;
+        _nextBatchId();
     }
 
-    function _nextBatchId() internal returns (uint256) {
+    function _nextBatchId() internal  {
         return nextBatchId++;
     }
 
